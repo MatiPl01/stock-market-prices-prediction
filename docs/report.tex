@@ -146,6 +146,14 @@ Odrzucono następujące cechy:
     \item Zyski Zatrzymane (\emph{retainedEarnings})
 \end{itemize}
 
-Po tej eliminacji, pozostało 25 istotnych cech do dalszej analizy.
+\subsection{Skalowanie danych i usunięcie outlierów}
+
+Ostatnim krokiem w preprocessingu było skalowanie danych z użyciem \emph{StandardScaler}. Dane zapisano w dwóch wariantach:
+\begin{enumerate}
+    \item Dane przeskalowane bez wcześniejszych modyfikacji.
+    \item Dane, w których przed skalowaniem odrzucono outliery przy użyciu algorytmu LOF (\emph{Local Outlier Factor}), a następnie przeskalowano z wykorzystaniem \emph{StandardScaler}.
+\end{enumerate}
+
+Przekształcone dane zapisano do plików CSV i były one gotowe do użycia podczas trenowania modelu CNN.
 
 \end{document}
