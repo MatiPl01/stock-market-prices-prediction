@@ -36,10 +36,10 @@ Celem niniejszego raportu jest przedstawienie prac wykonanych w ramach pracowni 
 
 W ramach tego projektu analizowane były rynkowe dane finansowe spółek publikowane w kwartalnych \textbf{bilansach} (balance sheet) notowanych na Giełdzie Papierów Wartościowych w Warszawie z ostatnich 20 lat, obejmujących lata 2004–2024. Dane te zawierały takie zmienne jak aktywa trwałe, kapitał własny, zobowiązania długoterminowe oraz środki pieniężne, które były niezbędne do stworzenia modelu predykcyjnego.
 
-\newpage % Dodanie nowej sekcji na nową stronę
+\newpage % Przeniesienie wprowadzenia na nową stronę
 \section{Pobieranie danych}
 
-W trakcie realizacji projektu konieczne było pozyskanie danych finansowych spółek giełdowych. Początkowo rozważana była możliwość wykorzystania danych dostępnych w statystykach publikowanych na stronie GPW\footnote{\url{https://www.gpw.pl/statystyki-gpw}}. Niestety, dane te nie zawierały wystarczających informacji dotyczących struktury kapitałowo-majątkowej przedsiębiorstw, co było kluczowe dla realizacji projektu.
+W trakcie realizacji projektu konieczne było pozyskanie danych finansowych spółek giełdowych. Początkowo rozważana była możliwość wykorzystania danych dostępnych w statystykach publikowanych na stronie GPW\footnote{\url{https://www.gpw.pl/statystyki-gpw}, dostęp: 8 września 2024}. Niestety, dane te nie zawierały wystarczających informacji dotyczących struktury kapitałowo-majątkowej przedsiębiorstw, co było kluczowe dla realizacji projektu.
 
 \subsection{Próba wykorzystania eksportera danych}
 
@@ -47,15 +47,15 @@ Podjęta została także próba użycia narzędzia eksportera danych, który zos
 
 \subsection{Wykorzystanie API FinancialModelingPrep}
 
-Ze względu na powyższe trudności, podjęta została decyzja o wykorzystaniu API dostępnego na stronie FinancialModelingPrep\footnote{\url{https://site.financialmodelingprep.com/}}. API to oferuje szeroki dostęp do danych finansowych spółek giełdowych z całego świata, w tym również z GPW. Udało się pozyskać dane dotyczące 396 spółek notowanych na GPW.
+Ze względu na powyższe trudności, podjęta została decyzja o wykorzystaniu API dostępnego na stronie FinancialModelingPrep\footnote{\url{https://site.financialmodelingprep.com/}, dostęp: 8 września 2024}. API to oferuje szeroki dostęp do danych finansowych spółek giełdowych z całego świata, w tym również z GPW. Udało się pozyskać dane dotyczące 396 spółek notowanych na GPW.
 
 \subsection{Proces pobierania danych}
 
-W pierwszej kolejności pobrana została lista wszystkich spółek dostępnych w API\footnote{\url{https://financialmodelingprep.com/api/v3/stock/list}}. Następnie, po odfiltrowaniu spółek GPW na podstawie nazwy giełdy, uzyskany został dostęp do danych finansowych, w tym bilansów\footnote{\url{https://financialmodelingprep.com/api/v3/balance-sheet-statement}}. Dane te obejmowały okres 20 lat w ujęciu kwartalnym, co pozwoliło na zbudowanie szczegółowej bazy do dalszych analiz.
+W pierwszej kolejności pobrana została lista wszystkich spółek dostępnych w API\footnote{\url{https://financialmodelingprep.com/api/v3/stock/list}, dostęp: 8 września 2024}. Następnie, po odfiltrowaniu spółek GPW na podstawie nazwy giełdy, uzyskany został dostęp do danych finansowych, w tym bilansów\footnote{\url{https://financialmodelingprep.com/api/v3/balance-sheet-statement}, dostęp: 8 września 2024}. Dane te obejmowały okres 20 lat w ujęciu kwartalnym, co pozwoliło na zbudowanie szczegółowej bazy do dalszych analiz.
 
 \subsection{Obliczanie wartości rynkowej spółki}
 
-Wartość rynkowa spółki została obliczona jako iloczyn ceny akcji (\emph{stock price}) oraz liczby wyemitowanych akcji (\emph{shares outstanding}). Do pobrania historycznych danych na temat cen akcji wykorzystany został odpowiedni endpoint API\footnote{\url{https://financialmodelingprep.com/api/v3/historical-price-full}}. Dzięki temu możliwe było uzyskanie pełnego obrazu zmian wartości rynkowej każdej z analizowanych spółek.
+Wartość rynkowa spółki została obliczona jako iloczyn ceny akcji (\emph{stock price}) oraz liczby wyemitowanych akcji (\emph{shares outstanding}). Do pobrania historycznych danych na temat cen akcji wykorzystany został odpowiedni endpoint API\footnote{\url{https://financialmodelingprep.com/api/v3/historical-price-full}, dostęp: 8 września 2024}. Dzięki temu możliwe było uzyskanie pełnego obrazu zmian wartości rynkowej każdej z analizowanych spółek.
 
 \newpage % Przeniesienie na nową stronę
 \section{Preprocessing danych}
@@ -102,19 +102,19 @@ W dalszej części procesu, usunięto kolumny zawierające symbol spółki oraz 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{image1.png}
+    \includegraphics[width=0.8\textwidth]{docs/img/pearson-correlation.png}
     \caption{Macierz korelacji Pearsona}
     \label{fig:pearson_corr}
 \end{figure}
 
 \subsection{Eliminacja skorelowanych cech}
 
-Zidentyfikowano pary cech o wysokiej korelacji, z których jedna została odrzucona, aby zapobiec nadmiernej redundancji danych:
+Zidentyfikowano pary cech o wysokiej korelacji, z których jedna została odrzucona, aby zapobiec nadmiernej redundancji danych. Odrzucono następujące kolumny:
 \begin{itemize}
-    \item \textbf{totalCurrentLiabilities} (\emph{Suma Zobowiązań Krótkoterminowych}) i \textbf{otherCurrentLiabilities} (\emph{Inne Zobowiązania Obrotowe}) – odrzucono \emph{otherCurrentLiabilities}, ponieważ \emph{totalCurrentLiabilities} obejmuje szerszą kategorię.
-    \item \textbf{totalDebt} (\emph{Suma Zadłużenia}) i \textbf{longTermDebt} (\emph{Zobowiązania Długoterminowe}) – odrzucono \emph{longTermDebt}, ponieważ \emph{totalDebt} obejmuje całkowite zadłużenie, a nie tylko długoterminowe.
-    \item \textbf{totalEquity} (\emph{Całkowity Kapitał Własny}) i \textbf{totalStockholdersEquity} (\emph{Kapitał Własny Akcjonariuszy}) – odrzucono \emph{totalEquity}, ponieważ \emph{totalStockholdersEquity} dokładniej opisuje kapitał właścicielski.
-    \item \textbf{totalInvestments} (\emph{Suma Inwestycji}) i \textbf{longTermInvestments} (\emph{Inwestycje Długoterminowe}) – odrzucono \emph{totalInvestments}, ponieważ \emph{longTermInvestments} lepiej odwzorowuje inwestycje długoterminowe.
+    \item \textbf{otherCurrentLiabilities} (\emph{Inne Zobowiązania Obrotowe}) – zdecydowano się na pozostawienie \emph{totalCurrentLiabilities}, ponieważ obejmuje szerszą kategorię zobowiązań krótkoterminowych.
+    \item \textbf{longTermDebt} (\emph{Zobowiązania Długoterminowe}) – zdecydowano się na pozostawienie \emph{totalDebt}, który obejmuje całkowite zadłużenie (zarówno długoterminowe, jak i krótkoterminowe).
+    \item \textbf{totalStockholdersEquity} (\emph{Kapitał Własny Akcjonariuszy}) – zdecydowano się na pozostawienie \emph{totalEquity}, który opisuje bardziej ogólnie całkowity kapitał własny, obejmujący nie tylko akcjonariuszy.
+    \item \textbf{longTermInvestments} (\emph{Inwestycje Długoterminowe}) – zdecydowano się na pozostawienie \emph{totalInvestments}, który obejmuje wszystkie inwestycje, zarówno krótkoterminowe, jak i długoterminowe.
 \end{itemize}
 
 \subsection{Eliminacja mało istotnych cech}
@@ -123,7 +123,7 @@ Na kolejnym etapie stworzono wykres istotności cech (zob. Rysunek \ref{fig:feat
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{image2.png}
+    \includegraphics[width=0.8\textwidth]{docs/img/feature-importances.png}
     \caption{Wykres istotności cech}
     \label{fig:feature_importance}
 \end{figure}
@@ -133,17 +133,17 @@ Odrzucono następujące cechy:
     \item Akcje Uprzywilejowane (\emph{preferredStock})
     \item Aktywa Podatkowe (\emph{taxAssets})
     \item Inne Aktywa Obrotowe (\emph{otherCurrentAssets})
+    \item Inwestycje Krótkoterminowe (\emph{shortTermInvestments})
     \item Należności Netto (\emph{netReceivables})
     \item Pozostałe Aktywa (\emph{otherAssets})
     \item Pozostałe Zobowiązania (\emph{otherLiabilities})
     \item Przychody Rozliczane w Czasie (\emph{deferredRevenue})
     \item Przychody Rozliczane w Czasie Długoterminowe (\emph{deferredRevenueNonCurrent})
-    \item Suma Zobowiązań (\emph{totalLiabilities})
-    \item Wartość Firmy (\emph{goodwill})
     \item Zobowiązania Krótkoterminowe (\emph{shortTermDebt})
     \item Zobowiązania Podatkowe (\emph{taxPayables})
     \item Zobowiązania z Tytułu Leasingu Finansowego (\emph{capitalLeaseObligations})
     \item Zobowiązania z Tytułu Podatków Odroczonych (\emph{deferredTaxLiabilitiesNonCurrent})
+    \item Zyski Zatrzymane (\emph{retainedEarnings})
 \end{itemize}
 
 Po tej eliminacji, pozostało 25 istotnych cech do dalszej analizy.
