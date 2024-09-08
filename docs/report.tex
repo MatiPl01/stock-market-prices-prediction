@@ -156,4 +156,37 @@ Ostatnim krokiem w preprocessingu było skalowanie danych z użyciem \emph{Stand
 
 Przekształcone dane zapisano do plików CSV i były one gotowe do użycia podczas trenowania modelu CNN.
 
+
+\newpage \section{Trenowanie modelu CNN}
+
+W celu wytrenowania modelu CNN wykorzystano dane przygotowane w poprzednich etapach. Proces trenowania został zrealizowany z użyciem sieci neuronowej, której architekturę przedstawiono na Rysunku \ref{fig
+}. Sieć ta składa się z trzech warstw konwolucyjnych o różnych liczbach filtrów, dwóch warstw MaxPooling, jednej warstwy spłaszczającej oraz dwóch warstw gęstych. Optymalizacja odbywała się za pomocą algorytmu Adam, a jako funkcję straty wykorzystano MSE. Model trenowano z maksymalną liczbą 200 epok oraz batch size wynoszącym 32, jednakże wprowadzono mechanizm wczesnego zatrzymania (early stopping), który monitorował wartość strat (loss) na zbiorze walidacyjnym i przerywał trening w momencie, gdy nie obserwowano dalszej poprawy wyników przez ustaloną liczbę epok.
+
+\begin{figure}[h] \centering \includegraphics[width=0.8\textwidth]{docs/img/model-architecture.png} \caption{Architektura modelu CNN} \label{fig
+} \end{figure}
+
+\subsection{Rezultaty trenowania modelu z outlierami}
+
+Pierwszy etap trenowania modelu przeprowadzono na danych zawierających outliery. Mechanizm wczesnego zatrzymania przerwał trening po około 50 epokach, co widać na Rysunku \ref{fig
+}. Krzywe strat (Loss) oraz średniego błędu bezwzględnego (Mean Absolute Error, MAE) dla zbioru treningowego i walidacyjnego pokazują, że model z outlierami osiągnął stabilizację, jednak różnica między zbiorem treningowym a walidacyjnym wskazuje na możliwe przeuczenie.
+
+\begin{figure}[h] \centering \includegraphics[width=0.8\textwidth]{docs/img/training-results-with-outliers.png} \caption{Historia trenowania modelu z outlierami} \label{fig
+} \end{figure}
+
+\subsection{Rezultaty trenowania modelu bez outlierów}
+
+Drugi etap polegał na trenowaniu modelu po wcześniejszym usunięciu outlierów przy użyciu algorytmu LOF. W tym przypadku, wczesne zatrzymanie zadziałało po około 110 epokach, co można zauważyć na Rysunku \ref{fig
+}. Krzywe strat i MAE pokazują znacznie mniejsze różnice między wynikami na zbiorze treningowym a walidacyjnym, co sugeruje lepszą generalizację modelu oraz brak przeuczenia.
+
+\begin{figure}[h] \centering \includegraphics[width=0.8\textwidth]{docs/img/training-results-without-outliers.png} \caption{Historia trenowania modelu po usunięciu outlierów} \label{fig
+} \end{figure}
+
+Porównując obie wersje modelu (z outlierami i bez), widać, że usunięcie anomalii poprawiło stabilność i ogólne dopasowanie modelu, co widoczne jest na niższych wartościach strat i błędów na zbiorze walidacyjnym.
+
+\newpage \section{Podsumowanie}
+
+W ramach pracowni problemowej dokonano wstępnej analizy danych finansowych spółek z GPW oraz wytrenowano model konwolucyjnej sieci neuronowej (CNN) do przewidywania wartości rynkowej przedsiębiorstw na podstawie struktury kapitałowo-majątkowej. Po eliminacji outlierów uzyskano lepsze dopasowanie modelu.
+
+Dalsza analiza pozwoliłaby określić, jakie zmiany w strukturze kapitałowej i majątkowej mogłyby zwiększyć wartość rynkową przedsiębiorstw. Symulacje oparte na modelu CNN mogłyby pomóc w zidentyfikowaniu optymalnych zmian w strukturze finansowej firm.
+
 \end{document}
